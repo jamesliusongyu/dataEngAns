@@ -26,9 +26,15 @@ USER postgres
 #       allows the RUN command to span multiple lines.
 RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER dba WITH SUPERUSER PASSWORD 'govtech';" &&\
-    createdb -O cars dba &&\
-    psql --command "CREATE TABLE IF NOT EXISTS car_dim (car_id UUID PRIMARY KEY, serial_number VARCHAR(255), model_name VARCHAR(100), model_variant VARCHAR(100), isNewCondition VARCHAR(1), weight INTEGER, engine_cubic_capcity INTEGER, price INTEGER, customer VARCHAR(255), manufacturer VARCHAR(255));" &&\
-    psql --command "CREATE TABLE IF NOT EXISTS sales_dim (sales_id serial PRIMARY KEY,  customer VARCHAR(255), customer_phone VARCHAR(100), salesperson VARCHAR(255) );" &&\
+    createdb -O dba cars 
+
+RUN    /etc/init.d/postgresql start &&\
+    psql --command "CREATE TABLE IF NOT EXISTS car_dim (car_id UUID PRIMARY KEY, serial_number VARCHAR(255), model_name VARCHAR(100), model_variant VARCHAR(100), isNewCondition VARCHAR(1), weight INTEGER, engine_cubic_capcity INTEGER, price INTEGER, customer VARCHAR(255), manufacturer VARCHAR(255));"
+
+RUN    /etc/init.d/postgresql start &&\
+    psql --command "CREATE TABLE IF NOT EXISTS sales_dim (sales_id serial PRIMARY KEY,  customer VARCHAR(255), customer_phone VARCHAR(100), salesperson VARCHAR(255) );"
+
+RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE TABLE IF NOT EXISTS car_transaction_fact (sales_id SERIAL REFERENCES sales_dim(sales_id), car_id UUID REFERENCES car_dim(car_id), date DATE NOT NULL, time TIME NOT NULL);"
 #stores phone as varchar because 11-11-11 etc
 
